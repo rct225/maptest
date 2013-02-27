@@ -26,7 +26,7 @@
 	$(document).ready(function(){ 
 
 		var map = new GMap2($("#map").get(0)); // set the element 'map' as container
-		var cheltenham = new GLatLng(51.89487062921521,-2.084484100341797); // set the lat long for the center point
+		var cheltenham = new GLatLng(40.521482,-74.461516); // set the lat long for the center point
 		map.setCenter(cheltenham, 9); // value 1 is the center, value 2 is the zoom level
 
 		var bounds = new GLatLngBounds();
@@ -42,14 +42,20 @@
 			reasons[G_GEO_TOO_MANY_QUERIES]   = "Too Many Queries";
 			reasons[G_GEO_SERVER_ERROR]       = "Server error";
 
+			
 			// initial load points
-				$.getJSON("http://127.0.0.1:8000/locations/list", function(json) {
-					if (json.Locations.length > 0) {
-						for (i=0; i<json.Locations.length; i++) {
-							var location = json.Locations[i];
+				$.ajax({
+					dataType: "jsonp",
+					url: "http://127.0.0.1:8000/locations/list",
+					data: function(json) {
+					alert("FOO");
+					if (json.length > 0) {
+						for (i=0; i<json.length; i++) {
+							var location = json[i];
 							addLocation(location);
 						}
 						zoomToBounds();
+					}
 					}
 				});
 
@@ -94,20 +100,20 @@
 				}
 
 			function addLocation(location) {
-					var point = new GLatLng(location.lat, location.lng);
+					var point = new GLatLng(location.latitute, location.longitude);
 					var marker = new GMarker(point);
 					map.addOverlay(marker);
 					bounds.extend(marker.getPoint());
 					
 					$("<li />")
-						.html(location.name)
+						.html(location.locationName)
 						.click(function(){
-							showMessage(marker, location.name);
+							showMessage(marker, location.locationName);
 						})
 						.appendTo("#list");
 					
 					GEvent.addListener(marker, "click", function(){
-						showMessage(this, location.name);
+						showMessage(this, location.locationName);
 					});
 				}
 
@@ -155,6 +161,6 @@
 		</form>
 
 	</div>
-<span>
+</span>
 	</body>
 </html>
