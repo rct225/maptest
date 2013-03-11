@@ -27,7 +27,7 @@
 
 		var map = new GMap2($("#map").get(0)); // set the element 'map' as container
 		var cheltenham = new GLatLng(40.521482,-74.461516); // set the lat long for the center point
-		map.setCenter(cheltenham, 9); // value 1 is the center, value 2 is the zoom level
+		map.setCenter(cheltenham, 5); // value 1 is the center, value 2 is the zoom level
 
 		var bounds = new GLatLngBounds();
 		var geo = new GClientGeocoder(); 
@@ -44,20 +44,15 @@
 
 			
 			// initial load points
-				$.ajax({
-					dataType: "jsonp",
-					url: "http://127.0.0.1:8000/locations/list",
-					sucess: function(json) {
-						alert("FOO");
-						if (json.length > 0) {
-							for (i=0; i<json.length; i++) {
-								var location = json[i];
-								addLocation(location);
-							}
-							zoomToBounds();
-						}
-						}
+				$.getJSON("http://127.0.0.1:8000/locations/list?callback=?", function(json) {
+					if ( json.length > 0 ) {
+						$(json).each(function(){
+							addLocation(this);
+						})
+						zoomtoBounds();
+					}
 				});
+				
 
 			$("#add-point").submit(function(){
 					geoEncode();
@@ -65,7 +60,7 @@
 				});
 
 			function geoEncode() {
-					var address = $("#add-point input[name=address]").val();
+					var address = $("#add-point input[name=locationAddress]").val();
 					geo.getLocations(address, function (result){
 						if (result.Status.code == G_GEO_SUCCESS) {
 							geocode = result.Placemark[0].Point.coordinates;
@@ -119,12 +114,13 @@
 
 			function zoomToBounds() {
 					map.setCenter(bounds.getCenter());
-					map.setZoom(7); // map.getBoundsZoomLevel(bounds)-1
+					map.setZoom(12); // map.getBoundsZoomLevel(bounds)-1
 				}
 
 			$("#message").appendTo( map.getPane(G_MAP_FLOAT_SHADOW_PANE) );
 
 			function showMessage(marker, text){
+					alert("HERE!");
 					var markerOffset = map.fromLatLngToDivPixel(marker.getPoint());
 
 					map.panTo(marker.getLatLng());
