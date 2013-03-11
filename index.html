@@ -47,16 +47,16 @@
 				$.ajax({
 					dataType: "jsonp",
 					url: "http://127.0.0.1:8000/locations/list",
-					data: function(json) {
-					alert("FOO");
-					if (json.length > 0) {
-						for (i=0; i<json.length; i++) {
-							var location = json[i];
-							addLocation(location);
+					sucess: function(json) {
+						alert("FOO");
+						if (json.length > 0) {
+							for (i=0; i<json.length; i++) {
+								var location = json[i];
+								addLocation(location);
+							}
+							zoomToBounds();
 						}
-						zoomToBounds();
-					}
-					}
+						}
 				});
 
 			$("#add-point").submit(function(){
