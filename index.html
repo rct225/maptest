@@ -49,7 +49,7 @@
 						$(json).each(function(){
 							addLocation(this);
 						})
-						zoomtoBounds();
+						zoomToBounds();
 					}
 				});
 				
@@ -95,7 +95,7 @@
 				}
 
 			function addLocation(location) {
-					var point = new GLatLng(location.latitute, location.longitude);
+					var point = new GLatLng(location.latitude, location.longitute);
 					var marker = new GMarker(point);
 					map.addOverlay(marker);
 					bounds.extend(marker.getPoint());
@@ -120,7 +120,6 @@
 			$("#message").appendTo( map.getPane(G_MAP_FLOAT_SHADOW_PANE) );
 
 			function showMessage(marker, text){
-					alert("HERE!");
 					var markerOffset = map.fromLatLngToDivPixel(marker.getPoint());
 
 					map.panTo(marker.getLatLng());
