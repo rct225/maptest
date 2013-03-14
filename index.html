@@ -5,6 +5,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
+		<script src="jquery-cookie/jquery.cookie.js" type="text/javascript"></script>
 		<link rel="stylesheet" href="examples-style.css">
 		<title>index</title>
 
@@ -31,6 +32,24 @@
 
 		var bounds = new GLatLngBounds();
 		var geo = new GClientGeocoder(); 
+		
+		function getCookie(name) {
+    		var cookieValue = null;
+    		if (document.cookie && document.cookie != '') {
+        		var cookies = document.cookie.split(';');
+        		for (var i = 0; i < cookies.length; i++) {
+            		var cookie = jQuery.trim(cookies[i]);
+            		// Does this cookie string begin with the name we want?
+            		if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                		cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                		break;
+            		}
+        		}
+    		}
+		    return cookieValue;
+		}
+		
+		var csrftoken = getCookie('csrftoken');
 
 		// setup a bunch of status codes
 		var reasons=[];
@@ -42,22 +61,28 @@
 			reasons[G_GEO_TOO_MANY_QUERIES]   = "Too Many Queries";
 			reasons[G_GEO_SERVER_ERROR]       = "Server error";
 
+			function csrfSafeMethod(method) {
+    			// these HTTP methods do not require CSRF protection
+    			return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+			}
+
+			
 			
 			// initial load points
-				$.getJSON("http://127.0.0.1:8000/locations/list?callback=?", function(json) {
-					if ( json.length > 0 ) {
-						$(json).each(function(){
-							addLocation(this);
-						})
-						zoomToBounds();
-					}
-				});
+			$.getJSON("http://127.0.0.1:8000/locations/list?callback=?", function(json) {
+				if ( json.length > 0 ) {
+					$(json).each(function(){
+						addLocation(this);
+					})
+					zoomToBounds();
+				}
+			});
 				
 
 			$("#add-point").submit(function(){
-					geoEncode();
-					return false;
-				});
+				geoEncode();
+				return false;
+			});
 
 			function geoEncode() {
 					var address = $("#add-point input[name=locationAddress]").val();
@@ -80,6 +105,14 @@
 					var data = $("#add-point :input").serializeArray();
 					data[data.length] = { name: "lng", value: geocode[0] };
 					data[data.length] = { name: "lat", value: geocode[1] };
+					$.ajaxSetup({
+    					crossDomain: false, // obviates need for sameOrigin test
+    					beforeSend: function(xhr, settings) {
+        					if (!csrfSafeMethod(settings.type)) {
+            					xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        					}
+    					}
+					});
 					$.post($("#add-point").attr('action'), data, function(json){
 						$("#add-point .error").fadeOut();
 						if (json.status == "fail") {
@@ -95,7 +128,7 @@
 				}
 
 			function addLocation(location) {
-					var point = new GLatLng(location.latitude, location.longitute);
+					var point = new GLatLng(location.latitude, location.longitude);
 					var marker = new GMarker(point);
 					map.addOverlay(marker);
 					bounds.extend(marker.getPoint());
@@ -114,7 +147,7 @@
 
 			function zoomToBounds() {
 					map.setCenter(bounds.getCenter());
-					map.setZoom(12); // map.getBoundsZoomLevel(bounds)-1
+					map.setZoom(14); // map.getBoundsZoomLevel(bounds)-1
 				}
 
 			$("#message").appendTo( map.getPane(G_MAP_FLOAT_SHADOW_PANE) );
@@ -137,7 +170,7 @@
 		<ul id="list"> </ul>
 		<div id="message" style="display:none;"> </div>
 
-		<form id="add-point" action="map-service.cfc?method=accept" method="post">
+		<form id="add-point" action="http://127.0.0.1:8000/locations/add" method="post">
 			<input type="hidden" name="action" value="savepoint" id="action">
 
 			<fieldset>
