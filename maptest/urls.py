@@ -4,6 +4,8 @@ from django.conf.urls import patterns, include, url
 # from django.contrib import admin
 # admin.autodiscover()
 
+from locations import views
+
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'maptest.views.home', name='home'),
@@ -14,5 +16,5 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
-    url(r'^locations/', include('locations.urls')),
+    url(r'^locations/', include('locations.urls')),    
 )

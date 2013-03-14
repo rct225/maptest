@@ -6,7 +6,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
 		<script src="jquery-cookie/jquery.cookie.js" type="text/javascript"></script>
-		<link rel="stylesheet" href="examples-style.css">
+		<link rel="stylesheet" href="/static/examples-style.css">
 		<title>index</title>
 
 	</head>
@@ -15,7 +15,7 @@
 
 <span class="page">
 
-<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="/static/style.css">
 
 <script type="text/javascript" src="http://www.google.com/jsapi?key=AIzaSyD_fj0xR-lPF4MWfJ7gVS_TOoF-P69l7dk"></script>
 	<script type="text/javascript">
@@ -170,7 +170,7 @@
 		<ul id="list"> </ul>
 		<div id="message" style="display:none;"> </div>
 
-		<form id="add-point" action="http://127.0.0.1:8000/locations/add" method="post">
+		<form id="add-point" action="http://127.0.0.1:8000/locations/add" method="post">{% csrf_token %}
 			<input type="hidden" name="action" value="savepoint" id="action">
 
 			<fieldset>
