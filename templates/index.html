@@ -85,7 +85,7 @@
 			});
 
 			function geoEncode() {
-					var address = $("#add-point input[name=locationAddress]").val();
+					var address = $("#add-point input[name=address]").val();
 					geo.getLocations(address, function (result){
 						if (result.Status.code == G_GEO_SUCCESS) {
 							geocode = result.Placemark[0].Point.coordinates;

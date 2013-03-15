@@ -1,8 +1,7 @@
 # Create your views here.
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from locations.models import Locations
 from serializers import ModelSerializer
-from django.utils import simplejson
 from django.views.decorators.csrf import requires_csrf_token
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -26,8 +25,11 @@ def index(request):
 
 @requires_csrf_token
 def processJSON(request):
-    data = simplejson.loads(request.POST['action'])
+    newLocation = Locations(locationName = request.POST['name'], latitude = request.POST['lat'], longitude = request.POST['lng'], locationAddress = request.POST['address'])
+    newLocation.save()
+    data = LocationSerializer().serialize('json', newLocation)
     return HttpResponse(data, mimetype='application/json')
+
     
 
 
