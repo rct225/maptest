@@ -80,6 +80,7 @@
 				
 
 			$("#add-point").submit(function(){
+				alert("HERE");
 				geoEncode();
 				return false;
 			});
@@ -113,6 +114,7 @@
         					}
     					}
 					});
+					alert("HERE 2");
 					$.post($("#add-point").attr('action'), data, function(json){
 						$("#add-point .error").fadeOut();
 						if (json.status == "fail") {
