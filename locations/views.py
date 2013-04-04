@@ -27,7 +27,8 @@ def index(request):
 def processJSON(request):
     newLocation = Locations(locationName = request.POST['name'], latitude = request.POST['lat'], longitude = request.POST['lng'], locationAddress = request.POST['address'])
     newLocation.save()
-    data = LocationSerializer().serialize('json', newLocation)
+    locations = Locations.objects.all();
+    data = LocationSerializer().serialize('json', locations)
     return HttpResponse(data, mimetype='application/json')
 
     

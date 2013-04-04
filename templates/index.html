@@ -81,6 +81,7 @@
 				
 
 			$("#add-point").submit(function(){
+				alert("HERE");
 				geoEncode();
 				return false;
 			});
@@ -114,6 +115,7 @@
         					}
     					}
 					});
+<<<<<<< HEAD
 					alert(data);
 					$('#add-point').ajaxForm({
 						dataType: 'json',
@@ -134,6 +136,21 @@
 							// zoomToBounds();
 						// }
 					// }, "json");
+=======
+					alert("HERE 2");
+					$.post($("#add-point").attr('action'), data, function(json){
+						$("#add-point .error").fadeOut();
+						if (json.status == "fail") {
+							$("#add-point .error").html(json.message).fadeIn();
+						}
+						if (json.status == "success") {
+							$("#add-point :input[name!=action]").val("");
+							var location = json.data;
+							addLocation(location);
+							zoomToBounds();
+						}
+					}, "json");
+>>>>>>> 7d5b36b0c87e467e875022dc5549dff18fe0af31
 				}
 				
 			function proessJson(data) {
