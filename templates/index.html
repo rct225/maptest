@@ -4,7 +4,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js" type="text/javascript"></script>
+		<script src="http://malsup.github.com/jquery.form.js"></script> 
 		<script src="jquery-cookie/jquery.cookie.js" type="text/javascript"></script>
 		<link rel="stylesheet" href="/static/examples-style.css">
 		<title>index</title>
@@ -27,8 +28,8 @@
 	$(document).ready(function(){ 
 
 		var map = new GMap2($("#map").get(0)); // set the element 'map' as container
-		var cheltenham = new GLatLng(40.521482,-74.461516); // set the lat long for the center point
-		map.setCenter(cheltenham, 5); // value 1 is the center, value 2 is the zoom level
+		var startingPoint = new GLatLng(40.521482,-74.461516); // set the lat long for the center point
+		map.setCenter(startingPoint, 5); // value 1 is the center, value 2 is the zoom level
 
 		var bounds = new GLatLngBounds();
 		var geo = new GClientGeocoder(); 
@@ -113,19 +114,33 @@
         					}
     					}
 					});
-					$.post($("#add-point").attr('action'), data, function(json){
-						$("#add-point .error").fadeOut();
-						if (json.status == "fail") {
-							$("#add-point .error").html(json.message).fadeIn();
-						}
-						if (json.status == "success") {
-							$("#add-point :input[name!=action]").val("");
-							var location = json.data;
-							addLocation(location);
-							zoomToBounds();
-						}
-					}, "json");
+					alert(data);
+					$('#add-point').ajaxForm({
+						dataType: 'json',
+						success: processJson
+					});
+					// $.post($("#add-point").attr('action'), data, function(json){
+					// alert(json.status);
+					// $("#add-point .error").fadeOut();
+						// alert(data);
+						// if (json.status == "fail") {
+							// $("#add-point .error").html(json.message).fadeIn();
+						// }
+						// if (json.status == "success") {
+							// $("#add-point :input[name!=action]").val("");
+							// var location = json.data;
+							// alert(location);
+							// addLocation(location);
+							// zoomToBounds();
+						// }
+					// }, "json");
 				}
+				
+			function proessJson(data) {
+				alert(data);
+				addLocation(data);
+				zoomToBounds();
+			}	
 
 			function addLocation(location) {
 					var point = new GLatLng(location.latitude, location.longitude);
@@ -170,7 +185,7 @@
 		<ul id="list"> </ul>
 		<div id="message" style="display:none;"> </div>
 
-		<form id="add-point" action="http://127.0.0.1:8000/locations/add" method="post">{% csrf_token %}
+		<form id="add-point" action="http://127.0.0.1:8000/locations/add" method="post">
 			<input type="hidden" name="action" value="savepoint" id="action">
 
 			<fieldset>

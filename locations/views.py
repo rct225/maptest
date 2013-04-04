@@ -1,5 +1,5 @@
 # Create your views here.
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from locations.models import Locations
 from serializers import ModelSerializer
 from django.views.decorators.csrf import requires_csrf_token
