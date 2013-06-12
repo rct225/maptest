@@ -25,7 +25,7 @@ def index(request):
 
 @requires_csrf_token
 def processJSON(request):
-    newLocation = Locations(locationName = request.POST['name'], latitude = request.POST['lat'], longitude = request.POST['lng'], locationAddress = request.POST['address'])
+    newLocation = Locations(locationName = request.POST['locationName'], latitude = request.POST['latitude'], longitude = request.POST['longitude'], locationAddress = request.POST['locationAddress'])
     newLocation.save()
     locations = Locations.objects.all();
     data = LocationSerializer().serialize('json', locations)
